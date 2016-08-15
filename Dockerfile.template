@@ -1,0 +1,18 @@
+# !include frombase
+# !include tini
+
+ARG NEED_USER="haproxy"
+
+# !include security
+
+# App-specific config
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends haproxy \
+    && apt-clean --aggressive \
+    && mkdir -p /run/haproxy \
+    && chown -R haproxy:haproxy /run/haproxy
+
+COPY entrypoint /entrypoint
+ENTRYPOINT ["/entrypoint"]
+CMD ["haproxy", "-f", "/etc/haproxy/haproxy.cfg"]
